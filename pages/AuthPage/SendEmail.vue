@@ -34,6 +34,7 @@ export default {
         sendEmail() {
             // Implement logic to send the email with the reset password link
             console.log("Sending email to: " + this.email);
+            this.$router.push("/AuthPage/SetPassword");
         },
     },
     components: { Navbar }

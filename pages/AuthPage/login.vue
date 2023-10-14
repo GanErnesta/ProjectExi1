@@ -25,15 +25,29 @@
                     <v-btn type="submit" style="background: transparent linear-gradient(97deg, #4E6EAF 0%, #A993D3 100%) 0% 0% no-repeat padding-box; padding: 5px 136px;
             border-radius: 15px; color: white; font: normal normal normal 20px/24px Helvetica;">Login</v-btn>
                 </form>
-                <a to="/AuthPage/SendEmail" class="forgot-password">Forgotten Your Password?</a>
-            </div>
-            <div v-if="showSuccessDialog" class="success-dialog">
-                <div class="modal-content">
-                    <img src="~/assets/success.svg" alt="Login Success" />
-                    <h2>Selamat!</h2>
-                    <p>Akun Berhasil Dibuat!</p>
-                    <v-btn to="/AuthPage/logout">Tutup</v-btn>
+                <a @click="redirectToSendEmail" class="forgot-password">Forgotten Your Password?</a>
+                <br>
+                <div class="additional-options flex-column">
+                    <hr class="divider" />
+                    <p>Or</p>
+                    <div class="row-layout">
+                        <v-btn class="google-register-btn" @click="registerWithGoogle">
+                            <img src="~/assets/google.svg" alt=""> Login with Google
+                        </v-btn>
+                        <p class="login-link">Have an account? <a @click="redirectToLogin">Login here</a>
+                        </p>
+                    </div>
                 </div>
+            </div>
+        </div>
+        <div v-if="showSuccessDialog" class="success-dialog">
+            <div class="modal-content">
+                <img src="~/assets/success.svg" alt="Login Success" />
+                <h2>Selamat!</h2>
+                <p>Login Berhasil</p>
+                <v-btn to="/AuthPage/logout"
+                    style="background: transparent linear-gradient(97deg, #4E6EAF 0%, #A993D3 100%) 0% 0% no-repeat padding-box;
+                    border-radius: 15px; font: normal normal normal 18px/24px Helvetica; height: 5vh; width: 10vw; color: white;">TUTUP</v-btn>
             </div>
         </div>
     </div>
@@ -43,8 +57,8 @@
 export default {
     data() {
         return {
-            email: 'saukagana@gmail.com',
-            password: 'saukagana',
+            email: '',
+            password: '',
             showPassword: false,
             showSuccessDialog: false,
             isLoggedIn: false,
@@ -81,6 +95,17 @@ export default {
                 this.$router.push('/AuthPage/logout');
             }
         },
+        redirectToLogin() {
+            // Implementasi logika pendaftaran dengan Google
+            this.$router.push('/AuthPage/login');
+        },
+        registerWithGoogle() {
+            // Implementasi logika pendaftaran dengan Google
+            console.log('Register with Google');
+        },
+        redirectToSendEmail() {
+            this.$router.push('/AuthPage/SendEmail');
+        },
         saveRegisteredEmail() {
             localStorage.setItem('registeredEmail', this.email);
         },
@@ -98,7 +123,7 @@ export default {
     justify-content: center;
     align-items: center;
     width: 1280px;
-    height: 800px;
+    height: 90vh;
 }
 
 .login-form {
@@ -151,14 +176,25 @@ label {
     font-size: medium;
 }
 
-input[type="email"],
-input[type="password"] {
+input[type="email"] {
     background: #FFFFFF 0% 0% no-repeat padding-box;
     width: 100%;
     padding: 10px;
     border-radius: 10px;
     outline: none;
     font-size: medium;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+input[type="password"] {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    outline: none;
+    font-size: 20px;
+    font-weight: 400;
 }
 
 .password-toggle {
@@ -219,6 +255,59 @@ input[type="password"] {
 .modal-content img {
     width: 100px;
     margin: 10px 0;
+}
+
+.additional-options {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 10px;
+    width: 100%;
+}
+
+.or {
+    font: normal normal normal 12px/14px Barlow;
+    color: #000000;
+    margin: 0 10px;
+}
+
+.google-register-btn {
+    font-size: medium;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    opacity: 1;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 15px;
+}
+
+.google-register-btn img {
+    width: 25px;
+    margin-right: 10px;
+    margin-bottom: 28px;
+}
+
+.login-link {
+    font: normal normal normal 11px/14px Barlow;
+    color: #000000;
+    display: block;
+    margin-top: 20px;
+    transition: color 0.3s;
+    text-align: center;
+}
+
+.login-link a {
+    color: #506EAF;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    color: #4E6EAF;
 }
 </style>
   
