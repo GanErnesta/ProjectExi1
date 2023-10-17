@@ -68,7 +68,7 @@ export default {
     },
     methods: {
         login() {
-            if (this.email === "saukagana@gmail.com" && this.password === "saukagana") {
+            if (this.email === "" && this.password === "") {
                 this.showSuccessDialog = true;
                 this.isLoggedIn = true;
                 console.log('Login berhasil');
@@ -162,7 +162,6 @@ export default {
 .form-group {
     margin: 10px 0;
 }
-
 .form-group h3 {
     margin: 10px 0;
     font: normal normal normal 14px/14px Barlow;

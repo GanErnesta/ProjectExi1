@@ -1,123 +1,106 @@
 <template>
     <div class="title">
-        <div class="login-container">
-            <div class="login-form">
-                <h1>Create Account!</h1>
-                <img src="~/assets/logo.png" alt="">
-                <h2>BRAND</h2>
-                <form @submit.prevent="register">
-                    <div class="form-group">
-                        <h3>Register to use amazing app</h3>
-                        <label for="email">Email</label>
-                        <input type="email" id="email" v-model="email" placeholder="Email" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" v-model="password" :type="showPassword ? 'text' : 'password'"
-                            placeholder="Password" required/>
-                        <i class="password-toggle" @click="showPassword = !showPassword"
-                            :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                        <p class="error-message" v-if="password.length > 0 && password.length < 8">
-                            Password is too short (minimum 8 characters).
-                        </p>
-                    </div>
-                    <div class="form-group">
-                        <label for="repeatPassword">Repeat Password</label>
-                        <input type="repeatPassword" id="repeatPassword" v-model="repeatPassword"
-                            :type="showPassword ? 'text' : 'password'" placeholder="Repeat Password" required />
-                        <i class="password-toggle" @click="showPassword = !showPassword"
-                            :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                    </div>
-                    <p v-if="!passwordMatch" class="password-mismatch-text">Repeat Password not the same!</p>
-                    <v-btn type="submit"
-                        style="background: transparent linear-gradient(97deg, #4E6EAF 0%, #A993D3 100%) 0% 0% no-repeat padding-box; padding: 5px 136px;
-                        border-radius: 15px; font: normal normal normal 20px/24px Helvetica Neue; color: #fff;">REGISTER</v-btn>
-                </form>
-                <div class="additional-options flex-column">
-                    <hr class="divider" />
-                    <p>OR</p>
-                    <div class="row-layout">
-                        <v-btn class="google-register-btn" @click="registerWithGoogle">
-                            <v-icon left>mdi-google</v-icon> Register with Google
-                        </v-btn>
-                        <p class="login-link">Have an account? <router-link to="/AuthPage/login">Login here</router-link></p>
-                    </div>
-                </div>
+      <div class="login-container">
+        <div class="login-form">
+          <h1>Create Account!</h1>
+          <img src="~/assets/logo.png" alt="">
+          <h2>BRAND</h2>
+          <form @submit.prevent="register">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input class="form-input" type="text" id="name" v-model="name" placeholder="Name" required />
             </div>
-            <div v-if="showSuccessDialog" class="success-dialog">
-                <div class="modal-content">
-                    <img src="~/assets/success.svg" alt="Login Success" />
-                    <h2>Selamat!</h2>
-                    <p>Registrasi Berhasil</p>
-                    <v-btn @click="closeSuccessDialog">Tutup</v-btn>
-                </div>
-            </div>
-        </div>
-    </div>
-</template>
   
-<script>
-export default {
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input class="form-input" type="email" id="email" v-model="email" placeholder="Email" required />
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input class="form-input" type="password" id="password" v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="Password" required />
+              <i class="password-toggle" @click="showPassword = !showPassword" :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              <p class="error-message" v-if="password.length > 0 && password.length < 8">Password is too short (minimum 8 characters).</p>
+            </div>
+            <v-btn type="submit"
+              style="background: transparent linear-gradient(97deg, #4E6EAF 0%, #A993D3 100%) 0% 0% no-repeat padding-box; padding: 5px 136px; border-radius: 15px; font: normal normal normal 20px/24px Helvetica; color: #fff; margin-top: 15px;">REGISTER</v-btn>
+          </form>
+          <div class="additional-options flex-column">
+            <hr class="divider" />
+            <p>OR</p>
+            <div class="row-layout">
+              <v-btn class="google-register-btn" @click="registerWithGoogle">
+                <img src="~/assets/google.svg" alt=""> Register with Google
+              </v-btn>
+              <p class="login-link">Have an account? <router-link to="/AuthPage/login">Login here</router-link></p>
+            </div>
+          </div>
+        </div>
+        <div v-if="showSuccessDialog" class="success-dialog">
+          <div class="modal-content">
+            <img src="~/assets/success.svg" alt="Login Success" />
+            <h2>Selamat!</h2>
+            <p>Akun Berhasil Dibuat</p>
+            <v-btn @click="closeSuccessDialog">Tutup</v-btn>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  
+  <script>
+  import axios from 'axios';
+  import api from '~/api';
+  
+  export default {
     data() {
-        return {
-            email: '',
-            password: '',
-            repeatPassword: '',
-            passwordMatch: true,
-            showPassword: false,
-        };
+      return {
+        name: '', // Tambahkan properti name
+        email: '',
+        password: '',
+        passwordMatch: true,
+        showPassword: false,
+        showSuccessDialog: false,
+      };
     },
     methods: {
-        async register() {
-            let valid = true;
-
-            // Periksa apakah kedua password cocok
-            if (this.password !== this.repeatPassword) {
-                // Jika kedua password tidak cocok, atur passwordMatch ke false
-                this.passwordMatch = false;
-                valid = false; // Tambahkan ini untuk menandai validasi yang gagal
+      async register() {
+        let valid = true;
+  
+        if (this.password.length < 8) {
+          valid = false;
+        }
+  
+        if (valid) {
+          try {
+            const response = await api.post('/registration', {
+              name: this.name, // Kirim name sebagai bagian dari data pendaftaran
+              email: this.email,
+              password: this.password,
+            });
+            console.log('Response:', response);
+            if (response.status === 200) {
+              this.showSuccessDialog = true;
+              console.log('Registrasi berhasil');
+              this.$router.push('/AuthPage/login');
             } else {
-                this.passwordMatch = true;
+              console.log('Registrasi gagal dengan kode :', response.status);
+              console.log('Pesan kesalahan:', response.data);
             }
-
-            if (this.email === 'email-yang-terdaftar' && this.password === 'password-yang-terdaftar') {
-                // Tampilkan modal login berhasil
-                this.showSuccessDialog = true;
-                console.log('Login berhasil');
-            } else {
-                // Password salah atau email tidak terdaftar
-                console.log('Login gagal');
-            }
-
-
-            if (this.password.length < 8) {
-                this.passwordError = true; // Atur passwordError menjadi true
-                valid = false;
-            } else {
-                this.passwordError = false; // Atur passwordError menjadi false
-            }
-
-            if (valid) {
-                // Implementasi logika login di sini
-                console.log('Email:', this.email);
-                console.log('Password:', this.password);
-
-                // Redirect using this.$router
-                this.$router.push('/AuthPage/login');
-            }
-        },
-        registerWithGoogle() {
-            // Implementasi logika pendaftaran dengan Google
-            console.log('Register with Google');
-        },
-        closeSuccessDialog() {
-            // Tutup modal login berhasil
-            this.showSuccessDialog = false;
-        },
+          } catch (error) {
+            console.error('Error:', error);
+          }
+        }
+      },
+      registerWithGoogle() {
+        console.log('Register with Google');
+      },
+      closeSuccessDialog() {
+        this.showSuccessDialog = false;
+      },
     },
+  };
+  </script>
 
-};
-</script>
 
   
 <style scoped>
@@ -200,6 +183,12 @@ export default {
     font-size: medium;
 }
 
+.google-register-btn img {
+    width: 25px;
+    margin-right: 10px;
+    margin-top: -15px;
+}
+
 .login-link {
     font: normal normal normal 11px/14px Barlow;
     color: #000000;
@@ -231,10 +220,10 @@ label {
 v-btn[type="button"] {
     font-size: large;
 }
-
-input[type="email"],
-input[type="password"],
-input[type="repeatPassword"] {
+.form-group {
+    margin-bottom: 10px;
+}
+.form-input{
     background: #FFFFFF 0% 0% no-repeat padding-box;
     width: 100%;
     padding: 10px;
@@ -242,7 +231,6 @@ input[type="repeatPassword"] {
     outline: none;
     font-size: medium;
 }
-
 .password-toggle {
     position: absolute;
     right: 10px;
