@@ -1,5 +1,4 @@
 <template>
-    
     <div class="profile-card">
         <div class="profile-circle">
             <!-- Add your user profile image here -->
@@ -7,29 +6,45 @@
         </div>
         <div class="profile-info">
             <h2>Welcome Back</h2>
-            <p>{{ username }}</p>
+            <p>{{ userData.name }}</p>
         </div>
         <router-link to="/AuthPage/login">
-            <button>LOG OUT</button>
+            <button @click="logout">LOG OUT</button>
         </router-link>
     </div>
 </template>
   
-<script>
-export default {
-    data() {
-        return {
-            username: "Sauka Gana Dzikri", // Ganti dengan nama pengguna yang sesuai
-        };
-    },
-    methods: {
-        logout() {
-            // Implementasi logika logout di sini
-            console.log("Logout");
-        },
-    },
+<script setup>
+import api from '~/api';
+import { ref, onMounted } from 'vue';
+
+const userData = ref([]);
+const getUserToken = () => {
+    const token = localStorage.getItem('token');
+    return token ? token.replace(/['"]+/g, '') : '';
 };
+
+const getUserData = async () => {
+    const userToken = getUserToken();
+    try {
+        const response = await api.get('/profile');
+        userData.value = response.data;
+        console.log(response);
+    } catch (error) {
+        console.log("error " + error);
+    }
+};
+
+const logout = () => {
+    localStorage.removeItem('token');
+    this.$router.push('/AuthPage/login');
+};
+
+onMounted(() => {
+    getUserData();
+});
 </script>
+  
   
 <style scoped>
 .profile-card {
@@ -44,6 +59,9 @@ export default {
     width: 30vw;
     margin: 0 auto;
     text-align: center;
+    top: 50%;
+    position: absolute;
+    transform: translate(70%, -50%);
 }
 
 .profile-circle {

@@ -32,9 +32,9 @@
                     <p>Or</p>
                     <div class="row-layout">
                         <v-btn class="google-register-btn" @click="registerWithGoogle">
-                            <img src="~/assets/google.svg" alt=""> Login with Google
+                            <img src="~/assets/google.svg" alt=""> Register with Google
                         </v-btn>
-                        <p class="login-link">Have an account? <a @click="redirectToLogin">Login here</a>
+                        <p class="login-link">Don't have an account? <a @click="redirectToLogin">Register Here</a>
                         </p>
                     </div>
                 </div>
@@ -54,6 +54,8 @@
 </template>
   
 <script>
+import api from '~/api';
+import Swal from 'sweetalert2';
 export default {
     data() {
         return {
@@ -67,24 +69,49 @@ export default {
         };
     },
     methods: {
-        login() {
-            if (this.email === "" && this.password === "") {
-                this.showSuccessDialog = true;
-                this.isLoggedIn = true;
-                console.log('Login berhasil');
+        async login() {
+            const credentials = {
+                email: this.email,
+                password: this.password,
+            };
 
-                // Panggil metode untuk menyimpan email
-                this.saveRegisteredEmail();
-            } else {
-                console.log('Login gagal');
+            try {
+                const response = await api.post("/login", credentials);
+                // Tangani respons dari server di sini
+                console.log(response.data);
+
+                if (response.data) {
+                    // Alamat email sudah diverifikasi, izinkan masuk
+                    // Tampilkan SweetAlert jika login berhasil
+                    await Swal.fire({
+                        title: 'Login Berhasil',
+                        text: 'Anda berhasil login.',
+                        icon: 'success',
+                    });
+
+                    this.$router.push('/AuthPage/logout');
+                } else {
+                    // Alamat email belum diverifikasi
+                    Swal.fire({
+                        title: 'Login Gagal',
+                        text: 'Alamat email belum diverifikasi. Silakan verifikasi email Anda terlebih dahulu.',
+                        icon: 'error',
+                    });
+                }
+            } catch (error) {
+                // Tangani kesalahan jika login gagal
+                console.error("Gagal login", error);
+
+                // Tampilkan SweetAlert jika login gagal
+                Swal.fire({
+                    title: 'Login Gagal',
+                    text: 'Username atau password salah.',
+                    icon: 'error',
+                });
             }
-            if (this.password.length < 8) {
-                // Atur passwordError menjadi true jika diperlukan
-                this.passwordError = true;
-            } else {
-                // Atur passwordError menjadi false jika diperlukan
-                this.passwordError = false;
-            }
+        },
+        togglePasswordVisible() {
+            this.passwordVisible = !this.passwordVisible;
         },
         closeSuccessDialog() {
             // Menutup dialog kesuksesan
@@ -106,10 +133,8 @@ export default {
         redirectToSendEmail() {
             this.$router.push('/AuthPage/SendEmail');
         },
-        saveRegisteredEmail() {
-            localStorage.setItem('registeredEmail', this.email);
-        },
     },
+
 };
 </script>
   
@@ -122,8 +147,8 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 1280px;
-    height: 90vh;
+    width: 85.2vw;
+    height: 88vh;
 }
 
 .login-form {
@@ -162,6 +187,7 @@ export default {
 .form-group {
     margin: 10px 0;
 }
+
 .form-group h3 {
     margin: 10px 0;
     font: normal normal normal 14px/14px Barlow;

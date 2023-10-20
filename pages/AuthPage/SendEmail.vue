@@ -4,7 +4,7 @@
             <h3>Please input your email, and we will send <br> your link for setting password</h3>
         </div>
         <div class="card-body">
-            <form @submit.prevent="sendEmail">
+            <form @submit.prevent="sendResetPasswordEmail">
                 <div class="form-group">
                     <label for="email">
                         <img src="~/assets/email.svg" alt="" style="margin-right: 2px;">
@@ -23,7 +23,7 @@
   
 <script>
 import Navbar from '../Navbar.vue';
-
+import api from '~/api';
 export default {
     data() {
         return {
@@ -31,10 +31,22 @@ export default {
         };
     },
     methods: {
-        sendEmail() {
-            // Implement logic to send the email with the reset password link
-            console.log("Sending email to: " + this.email);
-            this.$router.push("/AuthPage/SetPassword");
+        async sendResetPasswordEmail() {
+            try {
+                // Ganti URL_API_SEND_EMAIL dengan URL API yang  sesuai
+                const response = await api.post('/restore', {
+                    email: this.email,
+                });
+                if (response.status === 200) {
+                    // Email pengaturan ulang password berhasil dikirim
+                    console.log('Email berhasil dikirim');
+                } else {
+                    console.error('Gagal mengirim email pengaturan ulang password');
+                }
+            } catch (error) {
+                // Tangani kesalahan jika terjadi error
+                console.error('Terjadi kesalahan saat mengirim email pengaturan ulang password:', error);
+            }
         },
     },
     components: { Navbar }
@@ -51,6 +63,9 @@ export default {
     text-align: center;
     background: #ffffff 0% 0% no-repeat padding-box;
     box-shadow: 0px 5px 6px #0000004b;
+    top: 50%;
+    position: absolute;
+    transform: translate(70%, -50%);
 }
 
 .card-header {

@@ -9,7 +9,7 @@
           <label for="password">Password</label>
           <v-icon>mdi-lock</v-icon>
           <input type="password" id="password" v-model="password" :type="showPassword ? 'text' : 'password'"
-          placeholder="Enter your new password" required />
+            placeholder="Enter your new password" required />
           <span class="password-toggle" @click="showPassword = !showPassword">{{ showPassword ? "" : "" }}</span>
         </div>
         <div class="form-group">
@@ -74,6 +74,9 @@ export default {
   text-align: center;
   background: #ffffff 0% 0% no-repeat padding-box;
   box-shadow: 0px 5px 6px #0000004b;
+  top: 50%;
+  position: absolute;
+  transform: translate(70%, -50%);
 }
 
 .card-header {
@@ -128,6 +131,7 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+
 .popup-dialog {
   position: fixed;
   top: 0;
