@@ -2,33 +2,37 @@
     <div class="container flex-column">
         <div class="verification-card">
             <p class="title">Anda harus memverifikasi alamat email anda</p>
-            <p class="email">{{ registeredEmail }}</p>
-            <form @submit.prevent="verifyEmail">
+            <form @submit.prevent="checkToken">
                 <div class="form-group">
-                    <label for="verificationCode"></label>
-                    <input type="text" id="verificationCode" v-model="verificationCode" placeholder="Kode Verifikasi"
-                        required />
+                    <label for="verificationCode">Kode Verifikasi</label>
+                    <input type="number" id="verificationCode" v-model="verificationCode" placeholder="Kode Verifikasi"
+                        required @input="limitInput" />
                 </div>
-                <button class="lanjut" type="submit">Lanjut</button>
+                <button class="lanjut">Lanjut</button>
             </form>
             <div class="time">{{ countdownMinutes }}:{{ countdownSeconds }}</div>
         </div>
-        <div class="resend-container">
+        <div class = "resend-container">
             <button class="resend-button" style="color: white;" @click="resendVerificationCode" :disabled="resendDisabled">
-                Resend Code
+                Kirim Ulang Kode
             </button>
         </div>
     </div>
 </template>
   
 <script>
+import axios from 'axios'; // Import Axios
+import api from '~/api';
+
 export default {
     data() {
         return {
-            registeredEmail: 'karsakds@gmail.com',
-            verificationCode: '',
-            countdown: 120, // 2 menit (2 * 60 detik)
+            token: '', // Inisialisasi token dengan nilai token yang sesuai
+            email: '', // Tambahkan properti email dan inisialisasikan dengan alamat email pengguna
+            countdown: 120,
             countdownInterval: null,
+            verificationCode: '',
+            tokenValid: false,
         };
     },
     computed: {
@@ -43,24 +47,57 @@ export default {
         },
     },
     methods: {
-        verifyEmail() {
-            if (this.verificationCode === 'kode-verifikasi-yang-benar') {
-                console.log('Verifikasi berhasil');
-                // Redirect atau lakukan tindakan lain
-            } else {
-                console.log('Verifikasi gagal. Kode verifikasi tidak sesuai.');
+        async checkToken() {
+            console.log('Memeriksa token...');
+            const data = {
+                token: this.token,
+                verificationCode: this.verificationCode,
+            };
+
+            try {
+                const response = await api.post('/checkToken', data); // Gunakan Axios untuk permintaan POST
+
+                if (response.status === 200) {
+                    this.tokenValid = true;
+                    console.log('Token valid');
+                    // localStorage.setItem('token', this.token); // Set token dalam localStorage jika diperlukan
+                    this.$router.push('/AuthPage/SetPassword');
+                } else {
+                    this.tokenValid = false;
+                    console.log('Token tidak valid');
+                    console.log(response.data);
+                }
+            } catch (error) {
+                console.error('Terjadi kesalahan saat memeriksa token:', error);
+                this.tokenValid = false;
             }
         },
-        resendVerificationCode() {
+        async resendVerificationCode() {
             if (!this.resendDisabled) {
                 console.log('Mengirim ulang kode verifikasi...');
-                // Lakukan pengiriman ulang kode verifikasi ke alamat email yang terdaftar
+                try {
+                    const response = await axios.post('/resendCode', {
+                        email: this.email, // Gunakan properti email
+                    });
+
+                    if (response.status === 200) {
+                        console.log('Kode verifikasi berhasil dikirim ulang.');
+                    } else {
+                        console.error('Terjadi kesalahan saat mengirim ulang kode verifikasi.');
+                    }
+                } catch (error) {
+                    console.error('Terjadi kesalahan saat mengirim ulang kode verifikasi:', error);
+                }
                 this.startCountdown();
-                this.resendDisabled = true;
+            }
+        },
+        limitInput() {
+            if (this.verificationCode.length > 4) {
+                this.verificationCode = this.verificationCode.slice(0, 4);
             }
         },
         startCountdown() {
-            this.countdown = 120; // Set ulang countdown ke 2 menit (2 * 60 detik)
+            this.countdown = 120;
             clearInterval(this.countdownInterval);
             this.countdownInterval = setInterval(() => {
                 if (this.countdown > 0) {
@@ -68,7 +105,7 @@ export default {
                 } else {
                     clearInterval(this.countdownInterval);
                 }
-            }, 1000); // Perbarui setiap 1 detik
+            }, 1000);
         },
     },
     mounted() {
@@ -77,7 +114,6 @@ export default {
 };
 </script>
   
-  
 <style scoped>
 .verification-card {
     background-color: #fff;
@@ -85,11 +121,12 @@ export default {
     border-radius: 15px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     text-align: center;
-    width: 30vw;
+    width: 20vw;
     margin: 0 auto;
     top: 50%;
+    left: 30%;
     position: absolute;
-    transform: translate(70%, -50%);
+    transform: translate(50%, -50%);
     /* Untuk mengatur card persis di tengah */
 }
 
@@ -113,7 +150,7 @@ label {
 }
 
 input {
-    width: 25.4vw;
+    width: 18vw;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 15px;
@@ -135,14 +172,14 @@ button {
     margin-right: 20px;
     float: inline-end;
     font: normal normal normal 14px/12px Barlow;
-    top: 53%;
-    left: 53%;
+    top: 58%;
+    left: 52%;
     position: absolute;
     transform: translatey(-70%);
 }
 
 .lanjut {
-    width: 25.4vw;
+    width: 18vw;
     height: 5vh;
     font: normal normal normal 20px/24px Helvetica;
     font-weight: 300;
@@ -159,7 +196,8 @@ button {
     cursor: pointer;
     height: 4.5vh;
     width: 13.5vh;
-    top: 49%;
+    top: 50.7%;
+    left: 50.6%;
     position: absolute;
     transform: translate(30%, -45%);
 }

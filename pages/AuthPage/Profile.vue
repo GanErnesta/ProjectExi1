@@ -1,43 +1,46 @@
 <template>
     <div class="profile-card">
         <div class="profile-circle">
-            <!-- Add your user profile image here -->
             <img src="~/assets/pp.png" alt="User Profile" />
         </div>
         <div class="profile-info">
             <h2>Welcome Back</h2>
             <p>{{ userData.name }}</p>
         </div>
-        <router-link to="/AuthPage/login">
+        <router-link to="/AuthPage/Login">
             <button @click="logout">LOG OUT</button>
         </router-link>
     </div>
 </template>
-  
+
 <script setup>
 import api from '~/api';
+import axios from 'axios';
 import { ref, onMounted } from 'vue';
 
-const userData = ref([]);
-const getUserToken = () => {
-    const token = localStorage.getItem('token');
-    return token ? token.replace(/['"]+/g, '') : '';
-};
+// Mengambil token dari localStorage
+const token = localStorage.getItem('token', token);
+
+const userData = ref({}); // Menggunakan objek kosong untuk menyimpan data pengguna
 
 const getUserData = async () => {
-    const userToken = getUserToken();
     try {
-        const response = await api.get('/profile');
+        const response = await axios.get('https://1209-118-99-91-15.ngrok-free.app/api/profile', {
+            Headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         userData.value = response.data;
-        console.log(response);
     } catch (error) {
-        console.log("error " + error);
+        console.error("Terjadi kesalahan saat mengambil data pengguna:", error);
     }
 };
 
 const logout = () => {
+    // Menghapus token dari localStorage
     localStorage.removeItem('token');
-    this.$router.push('/AuthPage/login');
+    // Mengarahkan pengguna ke halaman login
+    router.push('/AuthPage/login');
 };
 
 onMounted(() => {

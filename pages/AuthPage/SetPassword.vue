@@ -1,45 +1,43 @@
 <template>
   <div class="card">
     <div class="card-header">
-      <h3>Please input a new password, and you can <br>login again</h3>
+      <h3>Silakan masukkan kata sandi baru, dan Anda dapat <br>masuk kembali</h3>
     </div>
     <div class="card-body">
       <form @submit.prevent="savePassword">
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password">Kata Sandi</label>
           <v-icon>mdi-lock</v-icon>
           <input type="password" id="password" v-model="password" :type="showPassword ? 'text' : 'password'"
-            placeholder="Enter your new password" required />
-          <span class="password-toggle" @click="showPassword = !showPassword">{{ showPassword ? "" : "" }}</span>
+            placeholder="Masukkan kata sandi baru" required />
+          <span class="password-toggle" @click="showPassword = !showPassword">{{ showPassword ? "" :
+            "" }}</span>
         </div>
         <div class="form-group">
-          <label for="repeatPassword">Repeat Password</label>
+          <label for="repeatPassword">Ulangi Kata Sandi</label>
           <v-icon>mdi-lock</v-icon>
           <input type="password" id="repeatPassword" v-model="repeatPassword"
-            :type="showRepeatPassword ? 'text' : 'password'" placeholder="Repeat your new password" required />
-          <span class="password-toggle" @click="showRepeatPassword = !showRepeatPassword">{{ showRepeatPassword ? "" : ""
-          }}</span>
+            :type="showRepeatPassword ? 'text' : 'password'" placeholder="Ulangi kata sandi baru" required />
+          <span class="password-toggle" @click="showRepeatPassword = !showRepeatPassword">{{ showRepeatPassword ?
+            "" : "" }}</span>
         </div>
         <div class="form-group">
-          <button type="submit">SAVE</button>
+          <button type="submit">SIMPAN</button>
         </div>
       </form>
     </div>
-    <div v-if="showSuccessDialog" class="popup-dialog">
-      <div class="popup-content">
-        <img src="~/assets/success.svg" alt="">
-        <h2>Selamat!</h2>
-        <p>Password baru <br> sudah disimpan.</p>
-        <button @click="redirectToLogin">LOG IN</button>
-      </div>
-    </div>
   </div>
 </template>
-  
+
 <script>
+import axios from 'axios';
+import api from '~/api';
+import Swal from 'sweetalert2';
+
 export default {
   data() {
     return {
+      token: '9249', // Token Anda
       password: "",
       repeatPassword: "",
       showPassword: false,
@@ -48,18 +46,43 @@ export default {
     };
   },
   methods: {
-    savePassword() {
-      // Implement logic to save the new password
+    async savePassword() {
       if (this.password === this.repeatPassword) {
-        console.log("Password saved successfully");
-        this.showSuccessDialog = true; // Menampilkan pop-up dialog sukses
+        const data = {
+          token: this.token,
+          password: this.password,
+          confirm_password: this.repeatPassword,
+        }
+        try {
+          const response = await api.post(`/forget-password/${this.token}`, data);
+
+          if (response.status === 200) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Kata sandi berhasil disimpan',
+            }).then(() => {
+              this.showSuccessDialog = true;
+              this.$router.push('/AuthPage/login');
+            });
+            console.log("Kata sandi berhasil disimpan");
+            this.showSuccessDialog = true; // Tampilkan pop-up keberhasilan
+          } else {
+            console.error("Gagal menyimpan kata sandi");
+          }
+        } catch (error) {
+          console.error("Terjadi kesalahan saat menyimpan kata sandi:", error);
+        }
       } else {
-        console.log("Passwords do not match");
+        Swal.fire({
+          icon: 'error',
+          title: 'Kata sandi tidak cocok',
+        })
+        console.log("Kata sandi tidak cocok");
       }
     },
     redirectToLogin() {
-      // Redirect ke halaman login saat tombol "Login" pada pop-up ditekan
-      this.$router.push('/AuthPage/login'); // Gantilah '/login' dengan rute yang sesuai
+      // Alihkan ke halaman masuk ketika tombol "MASUK" pada pop-up diklik
+      this.$router.push('/login'); // Gantilah dengan rute yang sesuai
     },
   },
 };
@@ -181,6 +204,5 @@ button:hover {
 
 .popup-content button:hover {
   background-color: #0056b3;
-}
-</style>
+}</style>
   

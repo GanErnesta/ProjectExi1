@@ -78,9 +78,10 @@ export default {
             try {
                 const response = await api.post("/login", credentials);
                 // Tangani respons dari server di sini
-                console.log(response.data);
+                console.log(response.credentials);
 
                 if (response.data) {
+                    localStorage.setItem('token', response.data.credentials.token);
                     // Alamat email sudah diverifikasi, izinkan masuk
                     // Tampilkan SweetAlert jika login berhasil
                     await Swal.fire({
@@ -88,8 +89,7 @@ export default {
                         text: 'Anda berhasil login.',
                         icon: 'success',
                     });
-
-                    this.$router.push('/AuthPage/logout');
+                    this.$router.push('/AuthPage/Profile');
                 } else {
                     // Alamat email belum diverifikasi
                     Swal.fire({

@@ -89,7 +89,7 @@ export default {
                             text: 'Anda berhasil terdaftar.',
                             icon: 'success',
                         }).then(() => {
-                            this.$router.push('/AuthPage/login');
+                            this.$router.push('/AuthPage/Login');
                         });
                     } else {
                         console.log('Registrasi gagal dengan kode :', response.status);

@@ -34,12 +34,14 @@ export default {
         async sendResetPasswordEmail() {
             try {
                 // Ganti URL_API_SEND_EMAIL dengan URL API yang  sesuai
-                const response = await api.post('/restore', {
+                const response = await api.post('/sendEmail', {
                     email: this.email,
                 });
                 if (response.status === 200) {
                     // Email pengaturan ulang password berhasil dikirim
-                    console.log('Email berhasil dikirim');
+                    console.log('Email berhasil dikirim ' +  response.status);
+                    this.$router.push('/AuthPage/ResendCode');
+
                 } else {
                     console.error('Gagal mengirim email pengaturan ulang password');
                 }
@@ -56,7 +58,7 @@ export default {
 <style scoped>
 .card {
     border-radius: 15px;
-    width: 30vw;
+    width: 20vw;
     height: 22vh;
     margin: 0 auto;
     padding: 20px;
@@ -64,6 +66,7 @@ export default {
     background: #ffffff 0% 0% no-repeat padding-box;
     box-shadow: 0px 5px 6px #0000004b;
     top: 50%;
+    left: 25%;
     position: absolute;
     transform: translate(70%, -50%);
 }
@@ -114,7 +117,7 @@ button {
     letter-spacing: 0px;
     color: #FFFFFF;
     opacity: 1;
-    width: 27vw;
+    width: 18vw;
 }
 
 button:hover {
