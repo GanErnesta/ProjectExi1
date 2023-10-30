@@ -1,11 +1,11 @@
 <template>
     <div class="profile-card">
         <div class="profile-circle">
-            <img src="~/assets/pp.png" alt="User Profile" />
+            <img :src="userData?.photo" alt="User Profile" />
         </div>
         <div class="profile-info">
             <h2>Welcome Back</h2>
-            <p>{{ userData.name }}</p>
+            <p>{{ userData?.name }}</p>
         </div>
         <router-link to="/AuthPage/Login">
             <button @click="logout">LOG OUT</button>
@@ -15,38 +15,37 @@
 
 <script setup>
 import api from '~/api';
-import axios from 'axios';
 import { ref, onMounted } from 'vue';
 
-// Mengambil token dari localStorage
-const token = localStorage.getItem('token', token);
+const token = localStorage.getItem('token');
+const userData = ref({});
 
-const userData = ref({}); // Menggunakan objek kosong untuk menyimpan data pengguna
-
-const getUserData = async () => {
+const data = async () => {
     try {
-        const response = await axios.get('https://1209-118-99-91-15.ngrok-free.app/api/profile', {
-            Headers: {
+        const response = await api.get('/api/profile', {
+            headers: {
                 Authorization: `Bearer ${token}`,
             },
         });
-        userData.value = response.data;
+        return response;
     } catch (error) {
         console.error("Terjadi kesalahan saat mengambil data pengguna:", error);
     }
 };
 
-const logout = () => {
-    // Menghapus token dari localStorage
-    localStorage.removeItem('token');
-    // Mengarahkan pengguna ke halaman login
-    router.push('/AuthPage/login');
-};
-
-onMounted(() => {
-    getUserData();
+// Panggil fungsi getUserData untuk mengambil data pengguna
+onMounted(async () => {
+    const response = await data();
+    userData.value = response.data.data;
+    console.log(userData.value);
 });
+
+const logout = () => {
+    localStorage.removeItem('token');
+    this.$router.push('/AuthPage/login');
+};
 </script>
+
   
   
 <style scoped>

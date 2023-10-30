@@ -15,15 +15,16 @@
                         <label for="password">Password</label>
                         <input type="password" id="password" v-model="password" :type="showPassword ? 'text' : 'password'"
                             placeholder="Password" style="font-size: medium;" required />
-                        <i class="password-toggle" @click="showPassword = !showPassword"
+                        <i class="password-toggle" @click="togglePasswordVisible"
                             :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                         <p style="color: red; font-size: medium;" class="error-message"
                             v-if="password.length > 0 && password.length < 8">
                             Password is too short (minimum 8 characters).
                         </p>
                     </div>
-                    <v-btn type="submit" style="background: transparent linear-gradient(97deg, #4E6EAF 0%, #A993D3 100%) 0% 0% no-repeat padding-box; padding: 5px 136px;
-            border-radius: 15px; color: white; font: normal normal normal 20px/24px Helvetica;">Login</v-btn>
+                    <button type="submit" style="background: transparent linear-gradient(97deg, #4E6EAF 0%, #A993D3 100%) 0% 0% no-repeat padding-box; padding: 5px 136px;
+            border-radius: 15px; color: white; font: normal normal normal 20px/24px Helvetica;"
+                        class="login-btn">Login</button>
                 </form>
                 <a @click="redirectToSendEmail" class="forgot-password">Forgotten Your Password?</a>
                 <br>
@@ -34,8 +35,7 @@
                         <v-btn class="google-register-btn" @click="registerWithGoogle">
                             <img src="~/assets/google.svg" alt=""> Register with Google
                         </v-btn>
-                        <p class="login-link">Don't have an account? <a @click="redirectToLogin">Register Here</a>
-                        </p>
+                        <p class="login-link">Don't have an account? <a @click="redirectToLogin">Register Here</a></p>
                     </div>
                 </div>
             </div>
@@ -45,9 +45,7 @@
                 <img src="~/assets/success.svg" alt="Login Success" />
                 <h2>Selamat!</h2>
                 <p>Login Berhasil</p>
-                <v-btn to="/AuthPage/logout"
-                    style="background: transparent linear-gradient(97deg, #4E6EAF 0%, #A993D3 100%) 0% 0% no-repeat padding-box;
-                    border-radius: 15px; font: normal normal normal 18px/24px Helvetica; height: 5vh; width: 10vw; color: white;">TUTUP</v-btn>
+                <button @click="closeSuccessDialog" class="close-btn">TUTUP</button>
             </div>
         </div>
     </div>
@@ -56,6 +54,7 @@
 <script>
 import api from '~/api';
 import Swal from 'sweetalert2';
+
 export default {
     data() {
         return {
@@ -63,9 +62,7 @@ export default {
             password: '',
             showPassword: false,
             showSuccessDialog: false,
-            isLoggedIn: false,
             passwordError: false,
-
         };
     },
     methods: {
@@ -76,22 +73,20 @@ export default {
             };
 
             try {
-                const response = await api.post("/login", credentials);
-                // Tangani respons dari server di sini
-                console.log(response.credentials);
+                const response = await api.post("/api/login", credentials);
+                console.log("Response:", response);
 
-                if (response.data) {
-                    localStorage.setItem('token', response.data.credentials.token);
-                    // Alamat email sudah diverifikasi, izinkan masuk
-                    // Tampilkan SweetAlert jika login berhasil
+                if (response.status === 200 && response.data) {
                     await Swal.fire({
                         title: 'Login Berhasil',
                         text: 'Anda berhasil login.',
                         icon: 'success',
                     });
+                    console.log(response.data.token)
+                    localStorage.setItem('token', response.data.data.token);
+                    // console.log(localStorage);
                     this.$router.push('/AuthPage/Profile');
                 } else {
-                    // Alamat email belum diverifikasi
                     Swal.fire({
                         title: 'Login Gagal',
                         text: 'Alamat email belum diverifikasi. Silakan verifikasi email Anda terlebih dahulu.',
@@ -99,10 +94,8 @@ export default {
                     });
                 }
             } catch (error) {
-                // Tangani kesalahan jika login gagal
                 console.error("Gagal login", error);
 
-                // Tampilkan SweetAlert jika login gagal
                 Swal.fire({
                     title: 'Login Gagal',
                     text: 'Username atau password salah.',
@@ -111,32 +104,25 @@ export default {
             }
         },
         togglePasswordVisible() {
-            this.passwordVisible = !this.passwordVisible;
+            this.showPassword = !this.showPassword;
         },
         closeSuccessDialog() {
-            // Menutup dialog kesuksesan
             this.showSuccessDialog = false;
         },
-        redirectToLogout() {
-            if (this.isLoggedIn) {
-                this.$router.push('/AuthPage/logout');
-            }
-        },
         redirectToLogin() {
-            // Implementasi logika pendaftaran dengan Google
             this.$router.push('/AuthPage/login');
         },
-        registerWithGoogle() {
-            // Implementasi logika pendaftaran dengan Google
+        async registerWithGoogle() {
+            // Implementasi logika registrasi dengan Google
             console.log('Register with Google');
         },
         redirectToSendEmail() {
             this.$router.push('/AuthPage/SendEmail');
         },
     },
-
 };
 </script>
+
   
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@700&display=swap');

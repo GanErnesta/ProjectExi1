@@ -1,9 +1,10 @@
 // api.js
 
 import axios from "axios";
+const cors = require('cors');
 
 const api = axios.create({
-    baseURL: "https://1209-118-99-91-15.ngrok-free.app/api", // Replace with your API's base URL
+    baseURL: "https://brand.playease.site", // Replace with your API's base URL
 });
 
 api.interceptors.request.use(
@@ -14,7 +15,9 @@ api.interceptors.request.use(
       }
       config.headers["Content-Type"] = "application/json";
       config.headers["ngrok-skip-browser-warning"] = "69420";
-
+      config.headers["Access-Control-Allow-Origin"] = "*";
+      config.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,PATCH,OPTIONS";
+      config.headers["Access-Control-Allow-Headers"] = "Origin, X-Requested-With, Content-Type, Accept, Authorization";
       return config;
     },
     (error) => {

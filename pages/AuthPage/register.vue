@@ -31,7 +31,7 @@
                     <hr class="divider" />
                     <p>OR</p>
                     <div class="row-layout">
-                        <v-btn class="google-register-btn" @click="verifyGoogleAuthentication">
+                        <v-btn class="google-register-btn" @click="loginGoogle">
                             <img src="~/assets/google.svg" alt=""> Login with Google
                         </v-btn>
                         <p class="login-link">Have an account? <router-link to="/AuthPage/login">Login here</router-link>
@@ -73,7 +73,7 @@ export default {
 
             if (valid) {
                 try {
-                    const response = await api.post('/registration', {
+                    const response = await api.post('/api/registration', {
                         name: this.name, // Kirim name sebagai bagian dari data pendaftaran
                         email: this.email,
                         password: this.password,
@@ -115,8 +115,12 @@ export default {
             this.$router.push({ name: '/AuthPage/logout', query: { name: this.name } });
         },
 
-        async verifyGoogleAuthentication() {
-            
+        async loginGoogle() {
+            try {
+                const response = await api.get('/google');
+            } catch (error) {
+                console.error('Error:', error);
+            }
         },
         closeSuccessDialog() {
             this.showSuccessDialog = false;
