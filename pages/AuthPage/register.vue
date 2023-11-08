@@ -128,12 +128,9 @@ export default {
         },
         async googleLogin() {
             try {
-                const socialAuth = await this.$socialAuth.login('google')
-                    .then(user => {
-                        // Handle login success
-                        console.log('User:', user);
-                    })
-                    console.log('Social Auth:', socialAuth);
+                const googleUser = await this.$gAuth.signIn();
+                console.log('Google user:', googleUser);
+                console.log('Google user token:', googleUser.getAuthResponse().id_token);
                 // Contoh: Anda perlu memanggil API dengan token id Google
                 if (response.status === 200) {
                     console.log('Login berhasil');

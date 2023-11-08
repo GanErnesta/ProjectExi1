@@ -1,13 +1,15 @@
-import Vue from 'vue';
-import VueSocialauth from 'vue-social-auth';
+import Vue from 'vue'
+import App from './App.vue'
+Vue.config.productionTip = false
 
-const socialConfig = {
-  providers: {
-    google: {
-      clientId: '832266083674-5pvu1subin8kdb1lfpb36urukj7l4k7r.apps.googleusercontent.com',
-      redirectUri: 'http://localhost:3000',
-    },
-  },
-};
+import GAuth from 'vue-google-oauth2'
 
-Vue.use(VueSocialauth, socialConfig);
+const gauthOption = {
+  clientId: '832266083674-5pvu1subin8kdb1lfpb36urukj7l4k7r.apps.googleusercontent.com',
+  scope: 'profile email',
+  prompt: 'consent',
+  fetch_basic_profile: true
+}
+Vue.use(GAuth, gauthOption)
+
+new Vue({ render: h => h(App) }).$mount('#app')
