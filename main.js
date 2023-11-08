@@ -1,10 +1,13 @@
-import Vue from 'vue'
-import GAuth from 'vue-google-oauth2'
+import Vue from 'vue';
+import VueSocialauth from 'vue-social-auth';
 
-const gauthOption = {
-  clientId: '286254916140-urve5kssfl7fjcuh5matqtcj42pcsrdk.apps.googleusercontent.com',
-  scope: 'profile email',
-  prompt: 'consent',
-}
-Vue.use(GAuth, gauthOption)
-export default GAuth
+const socialConfig = {
+  providers: {
+    google: {
+      clientId: '832266083674-5pvu1subin8kdb1lfpb36urukj7l4k7r.apps.googleusercontent.com',
+      redirectUri: 'http://localhost:3000',
+    },
+  },
+};
+
+Vue.use(VueSocialauth, socialConfig);

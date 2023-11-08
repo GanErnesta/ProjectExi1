@@ -31,7 +31,7 @@
                     <hr class="divider" />
                     <p>OR</p>
                     <div class="row-layout">
-                        <v-btn class="google-register-btn" @click="loginGoogle">
+                        <v-btn class="google-register-btn" @click="googleLogin">
                             <img src="~/assets/google.svg" alt=""> Login with Google
                         </v-btn>
                         <p class="login-link">Have an account? <router-link to="/AuthPage/login">Login here</router-link>
@@ -47,12 +47,12 @@
 <script>
 import api from '~/api';
 import Swal from 'sweetalert2';
+import axios from 'axios';
+import Vue from 'vue';
+import GAuth from 'vue-google-oauth2'
+
 
 export default {
-    // mounted() {
-    //     // Panggil metode untuk memverifikasi identitas pengguna
-    //     this.verifyGoogleAuthentication();
-    // },
     data() {
         return {
             name: '', // Tambahkan properti name
@@ -107,21 +107,49 @@ export default {
                 }
             }
         },
-
-        registerUser() {
-            // Register user logic here
-
-            // After successful registration, navigate to the profile page and pass the username
-            this.$router.push({ name: '/AuthPage/logout', query: { name: this.name } });
-        },
-
         async loginGoogle() {
             try {
-                const response = await api.get('/google');
-            } catch (error) {
+                // Panggil endpoint API Google Login
+                const response = await api.get('/api/google');
+                if (response.status === 200) {
+                    const url = "https://accounts.google.com/o/oauth2/auth?client_id=329073525441-5r4mlijv8033shl9i3snpegre9kk8nk8.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fbrand.playease.site%2Fapi%2Fgoogle%2Fcallback&scope=openid+profile+email&response_type=code";
+                    window.location.href = url;
+                    console.log('Login berhasil');
+                    localStorage.setItem('token', response.data.token);
+                } else {
+                    console.log('Login gagal dengan kode:', response.status);
+                    console.log('Pesan kesalahan:', response.data);
+                }
+            }
+            catch (error) {
                 console.error('Error:', error);
+                // Tindakan penanganan kesalahan lainnya
             }
         },
+        async googleLogin() {
+            try {
+                const socialAuth = await this.$socialAuth.login('google')
+                    .then(user => {
+                        // Handle login success
+                        console.log('User:', user);
+                    })
+                    console.log('Social Auth:', socialAuth);
+                // Contoh: Anda perlu memanggil API dengan token id Google
+                if (response.status === 200) {
+                    console.log('Login berhasil');
+                    localStorage.setItem('token', response.data.token);
+                    this.$router.push('/');
+                } else {
+                    console.log('Login gagal dengan kode:', response.status);
+                    console.log('Pesan kesalahan:', response.data);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Handle the error here
+            }
+        },
+
+
         closeSuccessDialog() {
             this.showSuccessDialog = false;
         },

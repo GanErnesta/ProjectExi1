@@ -45,11 +45,10 @@ const logout = () => {
     this.$router.push('/AuthPage/login');
 };
 </script>
-
-  
-  
 <style scoped>
-.profile-card {
+
+.profile-card  {
+    
     justify-content: center;
     display: flex;
     flex-direction: column;

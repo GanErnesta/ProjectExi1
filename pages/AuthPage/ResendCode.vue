@@ -4,15 +4,15 @@
             <p class="title">Anda harus memverifikasi alamat email anda</p>
             <form @submit.prevent="checkToken">
                 <div class="form-group">
-                    <label for="verificationCode">Kode Verifikasi</label>
-                    <input type="number" id="verificationCode" v-model="verificationCode" placeholder="Kode Verifikasi"
-                        required @input="limitInput" />
+                    <label for="token">Kode Verifikasi</label>
+                    <input type="number" id="verificationCode" v-model="OTP" placeholder="Kode Verifikasi" required
+                        @input="limitInput" />
                 </div>
                 <button class="lanjut">Lanjut</button>
             </form>
             <div class="time">{{ countdownMinutes }}:{{ countdownSeconds }}</div>
         </div>
-        <div class = "resend-container">
+        <div class="resend-container">
             <button class="resend-button" style="color: white;" @click="resendVerificationCode" :disabled="resendDisabled">
                 Kirim Ulang Kode
             </button>
@@ -27,7 +27,7 @@ import api from '~/api';
 export default {
     data() {
         return {
-            token: '', // Inisialisasi token dengan nilai token yang sesuai
+            OTP: '', // Inisialisasi token dengan nilai token yang sesuai
             email: '', // Tambahkan properti email dan inisialisasikan dengan alamat email pengguna
             countdown: 120,
             countdownInterval: null,
@@ -50,17 +50,16 @@ export default {
         async checkToken() {
             console.log('Memeriksa token...');
             const data = {
-                token: this.token,
-                verificationCode: this.verificationCode,
+                OTP: this.OTP,
             };
 
             try {
-                const response = await api.post('/checkToken', data); // Gunakan Axios untuk permintaan POST
+                const response = await api.post('/api/checkToken', data); // Gunakan Axios untuk permintaan POST
 
                 if (response.status === 200) {
                     this.tokenValid = true;
                     console.log('Token valid');
-                    // localStorage.setItem('token', this.token); // Set token dalam localStorage jika diperlukan
+                    localStorage.setItem('OTP', this.OTP); // Set token dalam localStorage jika diperlukan
                     this.$router.push('/AuthPage/SetPassword');
                 } else {
                     this.tokenValid = false;
@@ -74,11 +73,12 @@ export default {
         },
         async resendVerificationCode() {
             if (!this.resendDisabled) {
+                const data = {
+                    email: this.email,
+                };
                 console.log('Mengirim ulang kode verifikasi...');
                 try {
-                    const response = await axios.post('/resendCode', {
-                        email: this.email, // Gunakan properti email
-                    });
+                    const response = await api.post(`/api/resendOTP/${this.email}`, data);
 
                     if (response.status === 200) {
                         console.log('Kode verifikasi berhasil dikirim ulang.');

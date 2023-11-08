@@ -80,9 +80,9 @@ export default {
                     await Swal.fire({
                         title: 'Login Berhasil',
                         text: 'Anda berhasil login.',
-                        icon: 'success',
+                        icon: 'success',    
                     });
-                    console.log(response.data.token)
+                    localStorage.setItem('email', this.email);
                     localStorage.setItem('token', response.data.data.token);
                     // console.log(localStorage);
                     this.$router.push('/AuthPage/Profile');

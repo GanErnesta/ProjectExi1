@@ -34,11 +34,12 @@ export default {
         async sendResetPasswordEmail() {
             try {
                 // Ganti URL_API_SEND_EMAIL dengan URL API yang  sesuai
-                const response = await api.post('/sendEmail', {
+                const response = await api.post('/api/sendEmail', {
                     email: this.email,
                 });
                 if (response.status === 200) {
                     // Email pengaturan ulang password berhasil dikirim
+                    sessionStorage.setItem('email', this.email);
                     console.log('Email berhasil dikirim ' +  response.status);
                     this.$router.push('/AuthPage/ResendCode');
 

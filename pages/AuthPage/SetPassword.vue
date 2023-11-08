@@ -22,7 +22,7 @@
             "" : "" }}</span>
         </div>
         <div class="form-group">
-          <button type="submit">SIMPAN</button>
+          <button type="submit">SAVE</button>
         </div>
       </form>
     </div>
@@ -37,9 +37,9 @@ import Swal from 'sweetalert2';
 export default {
   data() {
     return {
-      token: '9249', // Token Anda
-      password: "",
-      repeatPassword: "",
+      token: '',
+      password: '12345678',
+      repeatPassword: '12345678',
       showPassword: false,
       showRepeatPassword: false,
       showSuccessDialog: false,
@@ -54,7 +54,7 @@ export default {
           confirm_password: this.repeatPassword,
         }
         try {
-          const response = await api.post(`/forget-password/${this.token}`, data);
+          const response = await api.post(`/api/forget-password/${this.token}`, data);
 
           if (response.status === 200) {
             Swal.fire({
@@ -62,7 +62,7 @@ export default {
               title: 'Kata sandi berhasil disimpan',
             }).then(() => {
               this.showSuccessDialog = true;
-              this.$router.push('/AuthPage/login');
+              this.$router.push('/AuthPage/Login');
             });
             console.log("Kata sandi berhasil disimpan");
             this.showSuccessDialog = true; // Tampilkan pop-up keberhasilan
