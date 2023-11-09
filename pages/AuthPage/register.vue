@@ -48,8 +48,6 @@
 import api from '~/api';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-import Vue from 'vue';
-import GAuth from 'vue-google-oauth2'
 
 
 export default {
@@ -61,6 +59,7 @@ export default {
             passwordMatch: true,
             showPassword: false,
             showSuccessDialog: false,
+            
         };
     },
     methods: {
@@ -128,18 +127,12 @@ export default {
         },
         async googleLogin() {
             try {
-                const googleUser = await this.$gAuth.signIn();
-                console.log('Google user:', googleUser);
-                console.log('Google user token:', googleUser.getAuthResponse().id_token);
-                // Contoh: Anda perlu memanggil API dengan token id Google
-                if (response.status === 200) {
-                    console.log('Login berhasil');
-                    localStorage.setItem('token', response.data.token);
-                    this.$router.push('/');
-                } else {
-                    console.log('Login gagal dengan kode:', response.status);
-                    console.log('Pesan kesalahan:', response.data);
-                }
+                const googleUser = await this.$gAuth.signIn()
+                console.log(googleUser)
+                googleUser.getId()
+                googleUser.getBasicProfile()
+                googleUser.getAuthResponse()
+                this.isSignIn = this.$gAuth.isAuthorized
             } catch (error) {
                 console.error('Error:', error);
                 // Handle the error here
