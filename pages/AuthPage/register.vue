@@ -47,10 +47,14 @@
 <script>
 import api from '~/api';
 import Swal from 'sweetalert2';
+import GoogleProfile from './GoogleProfile.vue';
 import axios from 'axios';
 
 
 export default {
+    components: {
+        GoogleProfile,
+    },
     data() {
         return {
             name: '', // Tambahkan properti name
@@ -59,7 +63,11 @@ export default {
             passwordMatch: true,
             showPassword: false,
             showSuccessDialog: false,
-            
+            isSignIn: false,
+            userId: "",
+            userName: "",
+            userEmail: "",
+            userProfileImage: "",
         };
     },
     methods: {
@@ -127,15 +135,45 @@ export default {
         },
         async googleLogin() {
             try {
-                const googleUser = await this.$gAuth.signIn()
-                console.log(googleUser)
-                googleUser.getId()
-                googleUser.getBasicProfile()
-                googleUser.getAuthResponse()
-                this.isSignIn = this.$gAuth.isAuthorized
+                // Implementasikan logika Google Sign-In di sini
+
+                // Memulai proses Google Sign-In
+                const googleUser = await this.$gAuth.signIn();
+                console.log('Google User:', googleUser);
+
+                // Mengambil informasi profil pengguna
+                const basicProfile = googleUser.getBasicProfile();
+
+                // Menyimpan detail pengguna
+                const userId = basicProfile.getId();
+                const userName = basicProfile.getName();
+                const userEmail = basicProfile.getEmail();
+                const userProfileImage = basicProfile.getImageUrl();
+
+                // Menampilkan detail pengguna yang didapatkan
+                console.log('Google User ID:', userId);
+                console.log('Google Username:', userName);
+                console.log('Google User Email:', userEmail);
+                console.log('Google Profile Image URL:', userProfileImage);
+
+                // Set status isSignIn atau lakukan tindakan lebih lanjut sesuai kebutuhan
+
+                // Contoh:
+                // this.isSignIn = true;
+
+                // Melanjutkan dengan penanganan data pengguna yang didapatkan atau navigasi ke halaman lain
+                // Misalnya:
+                this.$router.push('/Google/Profile');
             } catch (error) {
                 console.error('Error:', error);
-                // Handle the error here
+
+                // Menangani skenario kesalahan (menampilkan pesan kesalahan, dll.)
+                // Misalnya:
+                // Swal.fire({
+                //   title: 'Error Login Google',
+                //   text: 'Terjadi kesalahan selama login Google.',
+                //   icon: 'error',
+                // });
             }
         },
 

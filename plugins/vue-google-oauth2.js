@@ -1,10 +1,15 @@
+import { gapi } from 'gapi-script'
 import Vue from 'vue'
 import GAuth from 'vue-google-oauth2'
 
 const gauthOption = {
-    clientId: '320405960498-a6jj4jegk5q0r0bvv01r5dmd3np6t0ni.apps.googleusercontent.com',
+    clientId: '803782459833-hbm2041b5fpjb683mhoo1ercs6c2hdl5.apps.googleusercontent.com',
     scope: 'profile email',
     prompt: 'consent',
     fetch_basic_profile: true
 }
+
+gapi.load('auth2', () => {
+    gapi.auth2.init(gauthOption)
+})
 Vue.use(GAuth, gauthOption)
