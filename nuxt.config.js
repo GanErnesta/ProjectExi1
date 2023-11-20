@@ -2,15 +2,10 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
-  router: {
-    extendRoutes(routes, resolve) {
-      routes.push({
-        path: '/AuthPage/Register.vue',
-        component: resolve(__dirname, './pages/AuthPage/Register.vue'),
-      });
-    },
-  },
   ssr: false,
+  env:{
+    clientId: process.env.GOOGLE_CLIENT_ID,
+  },
   head: {
     titleTemplate: '%s - exi-magang',
     title: 'exi-magang',
@@ -25,7 +20,7 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { href: "https://fonts.googleapis.com/css2?family=Barlow:wght@500&display=swap", rel: "stylesheet" }
+      {href: "https://fonts.googleapis.com/css2?family=Barlow:wght@500&display=swap", rel:"stylesheet" }
 
     ]
   },

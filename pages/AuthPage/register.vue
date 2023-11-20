@@ -149,21 +149,29 @@ export default {
                 const userName = basicProfile.getName();
                 const userEmail = basicProfile.getEmail();
                 const userProfileImage = basicProfile.getImageUrl();
+                const userToken = googleUser.getAuthResponse();
 
                 // Menampilkan detail pengguna yang didapatkan
                 console.log('Google User ID:', userId);
                 console.log('Google Username:', userName);
                 console.log('Google User Email:', userEmail);
                 console.log('Google Profile Image URL:', userProfileImage);
+                console.log('Google User Token:', userToken);
+                localStorage.setItem('token', userToken.token);
 
-                // Set status isSignIn atau lakukan tindakan lebih lanjut sesuai kebutuhan
-
-                // Contoh:
-                // this.isSignIn = true;
-
-                // Melanjutkan dengan penanganan data pengguna yang didapatkan atau navigasi ke halaman lain
-                // Misalnya:
-                this.$router.push('/Google/Profile');
+                if (userToken) {
+                    this.$router.push(
+                        {
+                            path: '/AuthPage/GoogleProfile',
+                            query: {
+                                user: {
+                                    name: userName,
+                                    picture: userProfileImage
+                                }
+                            }
+                        }
+                    );
+                }
             } catch (error) {
                 console.error('Error:', error);
 
