@@ -39,7 +39,7 @@ export default {
                 });
                 if (response.status === 200) {
                     // Email pengaturan ulang password berhasil dikirim
-                    sessionStorage.setItem('email', this.email);
+                    localStorage.setItem('email', this.email);
                     console.log('Email berhasil dikirim ' +  response.status);
                     this.$router.push('/AuthPage/ResendCode');
 

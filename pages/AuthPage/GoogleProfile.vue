@@ -71,10 +71,8 @@ export default {
     },
     sendTokenToBackend(token) {
       // Send the token to the backend server
-      api.post('/api/oauthGoogle/${access_token}', {
-        access_token: token
-      })
-        .then(response => {
+      api.post(`/api/oauthGoogle/${access_token}`,)
+        .try(response => {
           console.log('Token sent to backend:', response)
         })
         .catch(error => {

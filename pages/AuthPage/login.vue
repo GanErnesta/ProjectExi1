@@ -110,7 +110,7 @@ export default {
             this.showSuccessDialog = false;
         },
         redirectToLogin() {
-            this.$router.push('/AuthPage/login');
+            this.$router.push('/AuthPage/Register');
         },
         async registerWithGoogle() {
             // Implementasi logika registrasi dengan Google

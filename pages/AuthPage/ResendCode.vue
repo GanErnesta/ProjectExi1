@@ -27,7 +27,7 @@ import api from '~/api';
 export default {
     data() {
         return {
-            OTP: '', // Inisialisasi token dengan nilai token yang sesuai
+            otp: '', // Inisialisasi token dengan nilai token yang sesuai
             email: '', // Tambahkan properti email dan inisialisasikan dengan alamat email pengguna
             countdown: 120,
             countdownInterval: null,
@@ -50,16 +50,15 @@ export default {
         async checkToken() {
             console.log('Memeriksa token...');
             const data = {
-                OTP: this.OTP,
+                otp: this.otp,
             };
-
             try {
-                const response = await api.post('/api/checkToken', data); // Gunakan Axios untuk permintaan POST
+                const response = await api.post('/api/checkOTP', data); // Gunakan Axios untuk permintaan POST
 
                 if (response.status === 200) {
                     this.tokenValid = true;
                     console.log('Token valid');
-                    localStorage.setItem('OTP', this.OTP); // Set token dalam localStorage jika diperlukan
+                    localStorage.setItem('otp', this.otp); // Set token dalam localStorage jika diperlukan
                     this.$router.push('/AuthPage/SetPassword');
                 } else {
                     this.tokenValid = false;
